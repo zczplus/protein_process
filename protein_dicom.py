@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import time
 import cv2
+from itertools import chain
 
 
 # 获取所有图片
@@ -19,7 +20,7 @@ def process_file_name(file_dir):
 
 
 # 自动分割
-def grouping(filename, img_name, protein):
+def grouping(filename, img_name, protein, protein_type):
     """
     :param filename: 文件路径
     :param protein: 蛋白质浓度列表
@@ -57,24 +58,20 @@ def grouping(filename, img_name, protein):
         else:
             selected_rec.iloc[2 + i * group_row:2 + i * group_row + group_row, 0] = i + 1
 
-    print(selected_rec)
-
-    selected_avg = insert_parameter(im_gray, selected_rec, row, protein)
+    selected_avg = insert_parameter(im_gray, selected_rec, row, protein, protein_type)
     #
     return selected_avg
 
 
 # 插入标识变量
-def insert_parameter(im_gray, selected_rec, row, protein):
+def insert_parameter(im_gray, selected_rec, row, protein, protein_type):
     # 注意：reset_index不改变自身
     selected_rec = selected_rec.reset_index(drop=True)
     # 将层数设为索引
     selected_rec.set_index('row', inplace=True)
-    print(selected_rec)
 
     # 获得对应灰度值DataFrame
     selected_avg = avg_gray(im_gray, selected_rec)
-    print("select_avg\n", selected_avg)
 
     # 填入protein值
     selected_rec_protein = pd.DataFrame(columns=selected_avg.columns)
@@ -85,9 +82,9 @@ def insert_parameter(im_gray, selected_rec, row, protein):
         temp_rows['protein'] = protein[i - 1]
         selected_rec_protein = selected_rec_protein.append(temp_rows)
 
-    print(selected_rec_protein)
+    selected_rec_protein.insert(5, 'protein_type', list(chain.from_iterable(protein_type)))
+    # print(selected_rec_protein)
 
-    #
     return selected_rec_protein
 
 
@@ -218,20 +215,48 @@ def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_
             os.makedirs(final_root_dir + './'.join(dirs))
 
     all_img = pd.DataFrame()
+
+    # 蛋白质类型声明
+    A = "clIscA1/clCry4"
+    B = "clIscA1/clCry4(LB +FAC)"
+    C = "zero"
+    # 蛋白质浓度
+    protein_img1 = [[0.09, 0.17, 0.15, 0.17, 0.15, 0],
+                    [0.07, 0.15, 0.13, 0.15, 0.13, 0],
+                    [0.08, 0.14, 0.13, 0.14, 0.13],
+                    [0.07, 0.13, 0.12, 0.13, 0.12],
+                    [0.07, 0.12, 0.11, 0.12, 0.11],
+                    [0.06, 0.11, 0.1, 0.11, 0.1],
+                    [0.07, 0.1, 0.1, 0.1, 0.1],
+                    [0.06, 0.09, 0.09, 0.09, 0.09]]
+
+    protein_img1_change = [[0.0901, 0.1701, 0.1501, 0.1702, 0.1502, 0.0001],
+                           [0.0701, 0.1501, 0.1301, 0.1502, 0.1302, 0.0002],
+                           [0.0801, 0.1401, 0.1303, 0.1402, 0.1304],
+                           [0.0702, 0.1301, 0.1201, 0.1302, 0.1202],
+                           [0.0701, 0.1201, 0.1101, 0.1202, 0.1102],
+                           [0.0601, 0.1101, 0.1001, 0.1102, 0.1002],
+                           [0.0702, 0.1001, 0.1003, 0.1002, 0.1004],
+                           [0.0602, 0.0901, 0.0902, 0.0902, 0.0903]]
+
+    # 蛋白质类型
+    protein_type = [[A, B, A, B, A, C],
+                    [A, B, A, B, A, C],
+                    [A, B, A, B, A],
+                    [A, B, A, B, A],
+                    [B, B, A, B, A],
+                    [B, B, A, B, A],
+                    [B, B, A, B, A],
+                    [B, B, A, B, A]]
+
+    print(protein_type)
     for img, output_name, lower_root in zip(imgs_dir, img_name, img_lower_root):
         # print(img)
 
         # cv2.imdecode 和 cv2.imencode避免中文路径的干扰
         # 以灰度图的形式读
-        protein_img1 = [[0.09, 0.17, 0.15, 0.17, 0.15, 0],
-                        [0.07, 0.15, 0.13, 0.15, 0.13, 0],
-                        [0.08, 0.14, 0.13, 0.14, 0.13],
-                        [0.07, 0.13, 0.12, 0.13, 0.12],
-                        [0.07, 0.12, 0.11, 0.12, 0.11],
-                        [0.06, 0.11, 0.1, 0.11, 0.1],
-                        [0.07, 0.1, 0.1, 0.1, 0.1],
-                        [0.06, 0.09, 0.09, 0.09, 0.09]]
-        temp_img = grouping(img, output_name, protein_img1)
+
+        temp_img = grouping(img, output_name, protein_img1_change, protein_type)
         all_img = all_img.append(temp_img)
 
     print(all_img)
