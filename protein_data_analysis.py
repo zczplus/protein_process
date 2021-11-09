@@ -112,15 +112,15 @@ def classif(protein_data):
     all_typeC.to_csv('img/img1_typeC.csv')
 
 
-def output_gray(raw_img, protein, TE_range):
-    three_gray = raw_img.set_index('protein')
-    three_gray = three_gray.set_index('TE', append=True)
-    three_gray = three_gray.drop(['x', 'y', 'w', 'h', 'avg_gray', 'protein_type'], axis=1)
-    three_gray['25_gray'] = 255 - three_gray['25_gray']
-    three_gray['50_gray'] = 255 - three_gray['50_gray']
-    three_gray['75_gray'] = 255 - three_gray['75_gray']
-    print(three_gray)
-    three_gray.to_csv('img/img1/img1_typeA/img1_typeA_three_gray.csv')
+def output_gray(raw_img, protein, TE_range, protein_zero):
+    # three_gray = raw_img.set_index('protein')
+    # three_gray = three_gray.set_index('TE', append=True)
+    # three_gray = three_gray.drop(['x', 'y', 'w', 'h', 'avg_gray', 'protein_type'], axis=1)
+    # three_gray['25_gray'] = 255 - three_gray['25_gray']
+    # three_gray['50_gray'] = 255 - three_gray['50_gray']
+    # three_gray['75_gray'] = 255 - three_gray['75_gray']
+    # print(three_gray)
+    # three_gray.to_csv('img/img1/img1_typeA/img1_typeA_three_gray.csv')
 
     avg_gray_list = pd.DataFrame(index=TE_range)
     for i in range(len(protein)):
@@ -129,7 +129,12 @@ def output_gray(raw_img, protein, TE_range):
         temp_gray = temp.iloc[:, 9]
         avg_gray_list[str(protein[i])] = np.ones_like(temp_gray) * 255 - temp_gray.values
 
-    avg_gray_list.to_csv('img/img1/img1_typeA/img1_typeA_avg_gray.csv')
+    # 将空白对照和实验组数据合并
+    frames = [protein_zero, avg_gray_list]
+    result = pd.concat(frames, axis=1)
+    print(result)
+
+    result.to_csv('img/img1/img1_typeA/img1_typeA_avg_gray.csv')
 
 
 if __name__ == '__main__':
@@ -137,21 +142,35 @@ if __name__ == '__main__':
     A = "clIscA1/clCry4"
     B = "clIscA1/clCry4(LB +FAC)"
     C = "zero"
-    # TE范围
-    TE_range = range(9, 254, 9)
 
     protein_data = pd.read_csv('img/img1/img1.csv')
     typeA_data = pd.read_csv('img/img1/img1_typeA/img1_typeA.csv')
     typeB_data = pd.read_csv('img/img1/img1_typeB/img1_typeB.csv')
     typeC_data = pd.read_csv('img/img1/img1_typeC/img1_typeC.csv')
 
+    # 选择对应的数据进行处理
     selected_data = typeA_data
+    protein_zero = typeC_data
+
+    # 自动获取蛋白质浓度
     protein_density = selected_data['protein'].unique()
+    # 自动获得TE_range
     TE_range = selected_data['TE'].unique()
     TE_range.sort()
+    # 自动标识y_label
     y_label = selected_data['protein_type'][0]
-    print(selected_data)
 
-    gray_bar(selected_data, protein_density, TE_range, y_label)
-    output_gray(selected_data, protein_density, TE_range)
+    # print(selected_data)
+
+    # 先计算空白组的所有平均灰度值
+    avg_gray_list_zero = pd.DataFrame(index=TE_range)
+    for i in range(len(protein_zero['protein'].unique())):
+        temp = protein_zero.iloc[i * 25:(i + 1) * 25]
+        temp = temp.sort_values(by='TE', axis=0, ascending=True)
+        temp_gray = temp.iloc[:, 9]
+        avg_gray_list_zero[str(protein_zero['protein'].unique()[i])] = np.ones_like(temp_gray) * 255 - temp_gray.values
+
+    print(avg_gray_list_zero)
+    # gray_bar(selected_data, protein_density, TE_range, y_label)
+    output_gray(selected_data, protein_density, TE_range, avg_gray_list_zero)
     pass
