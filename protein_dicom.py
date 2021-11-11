@@ -51,12 +51,14 @@ def grouping(filename, img_name, protein, protein_type):
 
     # 标记框在第几层
     for i in range(row):
-        if i == 0:
-            selected_rec.iloc[i * group_row:i * group_row + group_row + 1, 0] = i + 1
-        elif i == 1:
-            selected_rec.iloc[1 + i * group_row:i * group_row + group_row + 2, 0] = i + 1
-        else:
-            selected_rec.iloc[2 + i * group_row:2 + i * group_row + group_row, 0] = i + 1
+        selected_rec.iloc[i * group_row:i * group_row + group_row + 1, 0] = i + 1
+        # img1所需要的参数设置
+        # if i == 0:
+        #     selected_rec.iloc[i * group_row:i * group_row + group_row + 1, 0] = i + 1
+        # elif i == 1:
+        #     selected_rec.iloc[1 + i * group_row:i * group_row + group_row + 2, 0] = i + 1
+        # else:
+        #     selected_rec.iloc[2 + i * group_row:2 + i * group_row + group_row, 0] = i + 1
 
     selected_avg = insert_parameter(im_gray, selected_rec, row, protein, protein_type)
     #
@@ -75,6 +77,8 @@ def insert_parameter(im_gray, selected_rec, row, protein, protein_type):
 
     # 填入protein值
     selected_rec_protein = pd.DataFrame(columns=selected_avg.columns)
+
+    # print(selected_avg)
     for i in range(1, row + 1):
         # 按照横坐标进行排序
         temp_rows = selected_avg.loc[str(i)]
@@ -186,7 +190,7 @@ def avg_gray(im_gray, selected_rec_TE):
 
 
 # 对图片进行处理
-def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_process/img'):
+def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_process/img/img3_TE9_255'):
     # 获取文件路径及文件名称
     imgs_dir, img_name = process_file_name(filename)
 
@@ -219,7 +223,9 @@ def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_
     # 蛋白质类型声明
     A = "clIscA1/clCry4"
     B = "clIscA1/clCry4(LB +FAC)"
-    C = "zero"
+    D = "zero"
+    C = "clIscA1"
+    E = "clIscA1(LB +FAC)"
     # 蛋白质浓度
     protein_img1 = [[0.09, 0.17, 0.15, 0.17, 0.15, 0],
                     [0.07, 0.15, 0.13, 0.15, 0.13, 0],
@@ -239,6 +245,23 @@ def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_
                            [0.0702, 0.1001, 0.1003, 0.1002, 0.1004],
                            [0.0602, 0.0901, 0.0902, 0.0902, 0.0903]]
 
+    protein_img2 = [[1.74, 0.53, 1.24, 3.48, 0.75, 1.1],
+                    [1.45, 7, 3.05, 3.29, 0.9, 2.1],
+                    [0.62, 3.14, 2.68, 0.2, 0.71, 4],
+                    [0.57, 1.78, 1.74, 4.46, 0.66, 3.48],
+                    [0.44, 2.87, 0.89, 3.25, 0.4, 2],
+                    [0.33, 1.62, 7.18, 5.43, 0.2, 1.43],
+                    [0.0001, 3.55, 8.27, 4.46, 0.26, 1.13],
+                    [0.0002, 1.92, 1.12, 3.19, 1.74, 0.9]]
+
+    protein_img3 = [[0.96, 0.23, 0.7, 2.35, 0.70],
+                    [0.58, 5.27, 0.12, 1.56, 0.68],
+                    [0.39, 0.18, 9.07, 1.9, 2.51],
+                    [0.32, 4.11, 0.42, 1.06, 4.28],
+                    [0.19, 2.1, 0.35, 11.25, 2.36],
+                    [0.0001, 1.9, 0.4, 11.3, 9.1],
+                    [0.0002, 1.5, 5.95, 10.96, 10.51]]
+
     # 蛋白质类型
     protein_type = [[A, B, A, B, A, C],
                     [A, B, A, B, A, C],
@@ -249,18 +272,34 @@ def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_
                     [B, B, A, B, A],
                     [B, B, A, B, A]]
 
-    print(protein_type)
+    protein_type_img2 = [[C, C, C, C, C, C],
+                         [C, C, C, C, C, C],
+                         [C, C, C, C, C, C],
+                         [C, C, C, C, C, C],
+                         [C, C, C, C, C, C],
+                         [C, C, C, C, C, C],
+                         [C, C, C, C, C, C],
+                         [C, C, C, C, C, C]]
+
+    protein_type_img3 = [[E, E, E, E, E],
+                         [E, E, E, E, E],
+                         [E, E, E, E, E],
+                         [E, E, E, E, E],
+                         [E, E, E, E, E],
+                         [E, E, E, E, E],
+                         [E, E, E, E, E]]
+
     for img, output_name, lower_root in zip(imgs_dir, img_name, img_lower_root):
         # print(img)
 
         # cv2.imdecode 和 cv2.imencode避免中文路径的干扰
         # 以灰度图的形式读
 
-        temp_img = grouping(img, output_name, protein_img1_change, protein_type)
+        temp_img = grouping(img, output_name, protein_img3, protein_type_img3)
         all_img = all_img.append(temp_img)
 
     print(all_img)
-    all_img.to_csv('img/img1.csv')
+    all_img.to_csv('img/img3.csv')
     pass
 
 

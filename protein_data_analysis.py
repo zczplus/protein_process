@@ -126,15 +126,15 @@ def output_gray(raw_img, protein, TE_range, protein_zero):
     for i in range(len(protein)):
         temp = raw_img.iloc[i * 25:(i + 1) * 25]
         temp = temp.sort_values(by='TE', axis=0, ascending=True)
-        temp_gray = temp.iloc[:, 9]
+        temp_gray = temp.iloc[:, 8]
         avg_gray_list[str(protein[i])] = np.ones_like(temp_gray) * 255 - temp_gray.values
 
     # 将空白对照和实验组数据合并
-    frames = [protein_zero, avg_gray_list]
-    result = pd.concat(frames, axis=1)
-    print(result)
+    # frames = [protein_zero, avg_gray_list]
+    # result = pd.concat(frames, axis=1)
+    result = avg_gray_list
 
-    result.to_csv('img/img1/img1_typeA/img1_typeA_avg_gray.csv')
+    result.to_csv('img/img3/img3_avg_gray.csv')
 
 
 if __name__ == '__main__':
@@ -143,13 +143,14 @@ if __name__ == '__main__':
     B = "clIscA1/clCry4(LB +FAC)"
     C = "zero"
 
-    protein_data = pd.read_csv('img/img1/img1.csv')
-    typeA_data = pd.read_csv('img/img1/img1_typeA/img1_typeA.csv')
-    typeB_data = pd.read_csv('img/img1/img1_typeB/img1_typeB.csv')
+    protein_data = pd.read_csv('img/img3/img3.csv')
+
+    # typeA_data = pd.read_csv('img/img1/img1_typeA/img1_typeA.csv')
+    # typeB_data = pd.read_csv('img/img1/img1_typeB/img1_typeB.csv')
     typeC_data = pd.read_csv('img/img1/img1_typeC/img1_typeC.csv')
 
     # 选择对应的数据进行处理
-    selected_data = typeA_data
+    selected_data = protein_data
     protein_zero = typeC_data
 
     # 自动获取蛋白质浓度
@@ -168,9 +169,9 @@ if __name__ == '__main__':
         temp = protein_zero.iloc[i * 25:(i + 1) * 25]
         temp = temp.sort_values(by='TE', axis=0, ascending=True)
         temp_gray = temp.iloc[:, 9]
+
         avg_gray_list_zero[str(protein_zero['protein'].unique()[i])] = np.ones_like(temp_gray) * 255 - temp_gray.values
 
-    print(avg_gray_list_zero)
     # gray_bar(selected_data, protein_density, TE_range, y_label)
     output_gray(selected_data, protein_density, TE_range, avg_gray_list_zero)
     pass
