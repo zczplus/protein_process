@@ -190,7 +190,8 @@ def avg_gray(im_gray, selected_rec_TE):
 
 
 # 对图片进行处理
-def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_process/img/img3_TE9_255'):
+def img_processing(
+        filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_process/img/img2_51_75/img2_51_75_new_name'):
     # 获取文件路径及文件名称
     imgs_dir, img_name = process_file_name(filename)
 
@@ -263,14 +264,14 @@ def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_
                     [0.0002, 1.5, 5.95, 10.96, 10.51]]
 
     # 蛋白质类型
-    protein_type = [[A, B, A, B, A, C],
-                    [A, B, A, B, A, C],
-                    [A, B, A, B, A],
-                    [A, B, A, B, A],
-                    [B, B, A, B, A],
-                    [B, B, A, B, A],
-                    [B, B, A, B, A],
-                    [B, B, A, B, A]]
+    protein_type_img1 = [[A, B, A, B, A, D],
+                         [A, B, A, B, A, D],
+                         [A, B, A, B, A],
+                         [A, B, A, B, A],
+                         [B, B, A, B, A],
+                         [B, B, A, B, A],
+                         [B, B, A, B, A],
+                         [B, B, A, B, A]]
 
     protein_type_img2 = [[C, C, C, C, C, C],
                          [C, C, C, C, C, C],
@@ -295,11 +296,11 @@ def img_processing(filename='D:/Users/zcz/PycharmProjects/cv_processing/protein_
         # cv2.imdecode 和 cv2.imencode避免中文路径的干扰
         # 以灰度图的形式读
 
-        temp_img = grouping(img, output_name, protein_img3, protein_type_img3)
+        temp_img = grouping(img, output_name, protein_img2, protein_type_img2)
         all_img = all_img.append(temp_img)
 
     print(all_img)
-    all_img.to_csv('img/img3.csv')
+    all_img.to_csv('img/img2.csv')
     pass
 
 

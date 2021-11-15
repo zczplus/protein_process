@@ -107,9 +107,9 @@ def classif(protein_data):
     all_typeA = all_typeA.sort_values(by='protein', axis=0, ascending=True)
     all_typeB = all_typeB.sort_values(by='protein', axis=0, ascending=True)
     all_typeC = all_typeC.sort_values(by='y', axis=0, ascending=True)
-    all_typeA.to_csv('img/img1_typeA.csv')
-    all_typeB.to_csv('img/img1_typeB.csv')
-    all_typeC.to_csv('img/img1_typeC.csv')
+    all_typeA.to_csv('img/img1_new_typeA.csv')
+    all_typeB.to_csv('img/img1_new_typeB.csv')
+    all_typeC.to_csv('img/img1_new_typeC.csv')
 
 
 def output_gray(raw_img, protein, TE_range, protein_zero):
@@ -134,7 +134,7 @@ def output_gray(raw_img, protein, TE_range, protein_zero):
     # result = pd.concat(frames, axis=1)
     result = avg_gray_list
 
-    result.to_csv('img/img3/img3_avg_gray.csv')
+    result.to_csv('img/img2/img2_new_avg_gray.csv')
 
 
 if __name__ == '__main__':
@@ -143,11 +143,15 @@ if __name__ == '__main__':
     B = "clIscA1/clCry4(LB +FAC)"
     C = "zero"
 
-    protein_data = pd.read_csv('img/img3/img3.csv')
+    protein_data = pd.read_csv('img/img2_new_51_75.csv')
 
-    # typeA_data = pd.read_csv('img/img1/img1_typeA/img1_typeA.csv')
-    # typeB_data = pd.read_csv('img/img1/img1_typeB/img1_typeB.csv')
-    typeC_data = pd.read_csv('img/img1/img1_typeC/img1_typeC.csv')
+    # 对初始文件进行分类
+    # classif(protein_data)
+    # pass
+
+    # typeA_data = pd.read_csv('img/img1/img1_typeA/img1_new_typeA.csv')
+    # typeB_data = pd.read_csv('img/img1/img1_typeB/img1_new_typeB.csv')
+    typeC_data = pd.read_csv('img/img1/img1_typeC/img1_new_typeC.csv')
 
     # 选择对应的数据进行处理
     selected_data = protein_data
@@ -172,6 +176,6 @@ if __name__ == '__main__':
 
         avg_gray_list_zero[str(protein_zero['protein'].unique()[i])] = np.ones_like(temp_gray) * 255 - temp_gray.values
 
-    # gray_bar(selected_data, protein_density, TE_range, y_label)
+    # # gray_bar(selected_data, protein_density, TE_range, y_label)
     output_gray(selected_data, protein_density, TE_range, avg_gray_list_zero)
     pass
