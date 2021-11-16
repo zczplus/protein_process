@@ -3,7 +3,7 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    img = cv.imread('img/img1_TE9_255/TE9.jpg', 0)
+    img = cv.imread('img/Im07(1).jpg', 0)
     hist, bins = np.histogram(img.flatten(), 256, [0, 256])
 
     cdf = hist.cumsum()
@@ -22,5 +22,8 @@ if __name__ == '__main__':
     plt.xlim([0, 256])
     plt.legend(('cdf', 'histogram'), loc='upper left')
     plt.show()
+
+    cv.imshow('img2', img2)
+    cv.waitKey()
 
     pass
