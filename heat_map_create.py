@@ -128,10 +128,10 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
 
 
 if __name__ == '__main__':
-    data = pd.read_csv('img/img2/img2_new_avg_gray.csv', header=None)
+    data = pd.read_csv('img/E.coli/E.coli-clIscA1_clCry4/E.coli-clIscA1_clCry4_avg_gray.csv', header=None)
     print(data)
     data[0][0] = -1
-    data = data.sort_values(by=0, axis=1, ascending=True)
+    # data = data.sort_values(by=0, axis=1, ascending=True)
     print(data)
     data = pd.DataFrame(data.iloc[1:, 1:].values, columns=data.iloc[0, 1:], index=data.iloc[1:, 0])
     # data = data.loc[:, [0.0001, 0.9, 2.0, 3.48, 4.46]]
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     # print(data.corr())
     fig, ax = plt.subplots()
 
-    # plt.subplots_adjust(top=0.4)
+    plt.subplots_adjust(top=0.4)
 
     data_T = data.T.values
 
@@ -158,5 +158,5 @@ if __name__ == '__main__':
             data_new_column[i] = str(data_column[i])
 
     im, _ = heatmap(data_T, data_new_column, data.index.astype(int), ax=ax, cmap='magma_r')
-    annotate_heatmap(im, valfmt='{x:.1f}', size=3)
+    annotate_heatmap(im, valfmt='{x:.1f}', size=7)
     plt.show()
