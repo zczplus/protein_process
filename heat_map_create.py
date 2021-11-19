@@ -128,13 +128,13 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
 
 
 if __name__ == '__main__':
-    data = pd.read_csv('img/E.coli/E.coli-clIscA1_clCry4/E.coli-clIscA1_clCry4_avg_gray.csv', header=None)
+    data = pd.read_csv('img/avg_value/E.coli-clIscA1_clCry4_avg_gray.csv', header=None)
     print(data)
     data[0][0] = -1
     # data = data.sort_values(by=0, axis=1, ascending=True)
     print(data)
     data = pd.DataFrame(data.iloc[1:, 1:].values, columns=data.iloc[0, 1:], index=data.iloc[1:, 0])
-    # data = data.loc[:, [0.0001, 0.9, 2.0, 3.48, 4.46]]
+    # data = data.loc[:, [0.0002, 0.1001, 0.1302, 0.1502]]
     data.columns = [round(i, 2) for i in data.columns]
 
     data.index.name = None
@@ -157,6 +157,6 @@ if __name__ == '__main__':
             print(modf_[0])
             data_new_column[i] = str(data_column[i])
 
-    im, _ = heatmap(data_T, data_new_column, data.index.astype(int), ax=ax, cmap='magma_r')
-    annotate_heatmap(im, valfmt='{x:.1f}', size=7)
+    im, _ = heatmap(data_T, data_column, data.index.astype(int), ax=ax, cmap='magma_r')
+    annotate_heatmap(im, valfmt='{x:.1f}', size=11)
     plt.show()
